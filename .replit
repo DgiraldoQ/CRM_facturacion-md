@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["zip", "unzipNLS"]
+packages = ["zip", "unzipNLS", "python312Packages.python-lsp-black"]
 
 [[ports]]
 localPort = 5000
