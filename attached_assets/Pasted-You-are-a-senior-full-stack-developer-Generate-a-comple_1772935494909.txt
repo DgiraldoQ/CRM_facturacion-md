@@ -1,0 +1,301 @@
+You are a senior full-stack developer.
+
+Generate a complete web application for Colombian electronic invoicing (Factura Electrónica Colombia) with a working backend and frontend.
+
+The project must be structured so it runs easily on Replit.
+
+TECH STACK
+
+Backend
+- Node.js
+- Express
+- TypeScript
+- Prisma ORM
+- SQLite (preferred for Replit, PostgreSQL optional)
+- JWT authentication
+- bcrypt for password hashing
+
+Frontend
+- React
+- TypeScript
+- Vite
+- TailwindCSS
+- React Router
+- React Hook Form
+- react-qr-code
+- html2canvas or jsPDF for generating PDF invoices
+
+PROJECT STRUCTURE
+
+Create two main folders:
+
+/backend
+/frontend
+
+Include all configuration files needed to run the project.
+
+BACKEND FEATURES
+
+Authentication
+- User registration and login
+- Email + password
+- Password hashed with bcrypt
+- JWT tokens returned on login
+- Protected routes middleware
+
+Business registration (required after login)
+
+Fields:
+- name
+- NIT
+- DV (verification digit)
+- address
+- phone
+- email
+- regime (SIMPLIFIED or COMMON)
+
+DIAN Resolution data:
+- resolutionPrefix
+- resolutionNumber
+- resolutionFrom
+- resolutionTo
+- resolutionExpiry
+
+Store this in the database.
+
+Product management
+
+CRUD operations for products
+
+Fields:
+- name
+- price
+- ivaType (enum)
+    STANDARD (19%)
+    REDUCED (5%)
+    ZERO (0%)
+    EXCLUDED
+- stock (optional)
+- businessId
+
+Customers
+
+Fields:
+- name
+- nit
+- dv
+- address
+- phone
+- email
+- businessId
+
+Invoices
+
+Create invoice with:
+
+- select existing customer OR quick create
+- add products
+- quantity
+- price
+
+Calculate automatically:
+- subtotal
+- iva
+- total
+
+When saving an invoice:
+
+1. Generate the invoice number using the business resolution:
+   prefix + next sequential number
+
+2. Generate a simulated CUFE using SHA256 hash of:
+   invoice number + date + total + customer NIT
+
+3. Generate a simplified UBL-like XML structure containing:
+   - company data
+   - customer data
+   - products
+   - totals
+
+4. Simulate sending to DIAN (mock):
+   Instead of a real provider, just generate the CUFE.
+
+5. Generate a QR code with the CUFE.
+
+6. Generate a PDF invoice including:
+   - company data
+   - customer data
+   - product table
+   - totals
+   - CUFE
+   - QR code
+
+Use jsPDF or @react-pdf/renderer.
+
+7. Save invoice in database with:
+
+- number
+- cufe
+- xml (string)
+- pdf (base64 or file path)
+- date
+- subtotal
+- iva
+- total
+- businessId
+- customerId
+
+API ENDPOINTS
+
+Auth
+
+POST /auth/register
+POST /auth/login
+
+Business
+
+GET /business
+POST /business
+
+Products
+
+GET /products
+POST /products
+PUT /products/:id
+DELETE /products/:id
+
+Customers
+
+GET /customers
+POST /customers
+
+Invoices
+
+POST /invoices
+GET /invoices
+GET /invoices/:id/pdf
+
+FRONTEND (React)
+
+Use React Router.
+
+Pages
+
+- Login
+- Register
+- RegisterBusiness (if user has no business yet)
+- Dashboard
+- Products
+- Customers
+- NewInvoice
+- InvoicesList
+- InvoiceView
+
+NewInvoice page
+
+Dynamic form where the user can:
+
+- select customer
+- add products
+- set quantity
+- calculate totals automatically
+
+After saving:
+
+- show link to download the PDF
+- redirect to invoice list
+
+Dashboard
+
+Display:
+
+- total invoiced today
+- latest invoices
+
+PRISMA MODELS
+
+User
+- id
+- email
+- password
+- businessId
+
+Business
+- id
+- name
+- nit
+- dv
+- address
+- phone
+- email
+- regime
+- resolutionPrefix
+- resolutionNumber
+- resolutionFrom
+- resolutionTo
+- resolutionExpiry
+- currentNumber
+
+Product
+- id
+- name
+- price
+- ivaType
+- stock
+- businessId
+
+Customer
+- id
+- name
+- nit
+- dv
+- address
+- phone
+- email
+- businessId
+
+Invoice
+- id
+- number
+- cufe
+- xml
+- pdf
+- date
+- subtotal
+- iva
+- total
+- businessId
+- customerId
+
+TECHNICAL REQUIREMENTS
+
+- Store JWT token in localStorage
+- Protect private routes
+- Use Prisma with SQLite for Replit compatibility
+- Create a seed script with:
+  - demo company
+  - demo products
+  - demo customer
+- CUFE must always be unique per invoice
+- Write clean and well commented code
+
+OUTPUT
+
+Generate the complete working project including:
+
+- backend code
+- frontend code
+- Prisma schema
+- seed script
+- API routes
+- React pages
+- Tailwind setup
+- README with instructions
+
+README must include:
+
+npm install
+npx prisma migrate dev
+npm run dev
+
+Ensure the project runs successfully in Replit without Docker.
